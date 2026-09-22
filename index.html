@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Convite - Daniella</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=IM+Fell+English+SC&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --parchment: #e9d7ac;
+    --parchment-dark: #d8c08a;
+    --ink: #3a2a17;
+    --wine: #6b1418;
+    --wine-dark: #4a0e10;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{
+    margin:0; padding:0; width:100%; height:100%;
+    background:#000; overflow:hidden;
+    font-family:'EB Garamond', serif;
+  }
+  #app{
+    position:fixed; inset:0; width:100%; height:100%;
+    max-width:600px; margin:0 auto; overflow:hidden; background:#000;
+  }
+  .screen{
+    position:absolute; inset:0; width:100%; height:100%;
+    display:none; align-items:center; justify-content:center;
+    background-size:cover; background-position:center; background-repeat:no-repeat;
+  }
+  .screen.active{display:flex;}
+  .fade-in{animation:fadeIn .8s ease forwards;}
+  @keyframes fadeIn{from{opacity:0} to{opacity:1}}
+
+  /* ---------- CAPA ---------- */
+  #cover{
+    background-image:url('capaharry.png');
+    cursor:pointer;
+  }
+  #cover .hint{
+    position:absolute; bottom:6%; left:50%; transform:translateX(-50%);
+    color:#f3e6c0; font-family:'Cinzel', serif; letter-spacing:2px;
+    font-size:14px; text-shadow:0 2px 6px rgba(0,0,0,.8);
+    animation:pulse 2s infinite; text-align:center; width:90%;
+  }
+  @keyframes pulse{0%,100%{opacity:.55} 50%{opacity:1}}
+
+  /* ---------- VIDEO ---------- */
+  #videoScreen{background:#000;}
+  #envelopeVideo{width:100%; height:100%; object-fit:cover;}
+  #skipBtn{
+    position:absolute; bottom:5%; right:5%;
+    background:rgba(0,0,0,.5); color:#f3e6c0; border:1px solid #f3e6c0;
+    padding:8px 16px; border-radius:20px; font-family:'Cinzel', serif;
+    font-size:12px; letter-spacing:1px; opacity:0; pointer-events:none;
+    transition:opacity .4s;
+  }
+  #skipBtn.show{opacity:1; pointer-events:auto;}
+
+  /* ---------- INFO ---------- */
+  #info{background-image:url('infoharry.png');}
+  .hotspot{
+    position:absolute; background:transparent; border:none; cursor:pointer;
+    /* deixe visível temporariamente pra calibrar a posição: outline:1px solid red; */
+  }
+  #hsDicas{ top:75.5%; left:22%; width:56%; height:4.3%; }
+  #hsConfirma{ top:81.8%; left:22%; width:56%; height:4.3%; }
+
+  /* ---------- DICAS ---------- */
+  #dicas{background-image:url('dicasharry.png');}
+
+  /* ---------- Botão Voltar (padrão pra telas sobre imagem) ---------- */
+  .btn-voltar{
+    position:absolute; top:4%; left:4%;
+    background:var(--wine); color:#f3e6c0; border:2px solid #f3e6c0;
+    font-family:'Cinzel', serif; font-size:13px; letter-spacing:1px;
+    padding:9px 18px; border-radius:30px; cursor:pointer;
+    box-shadow:0 3px 10px rgba(0,0,0,.5);
+  }
+  .btn-voltar:active{transform:scale(.96);}
+
+  /* ---------- RSVP ---------- */
+  #rsvp{
+    background:radial-gradient(ellipse at center, #f3e2b8 0%, var(--parchment) 55%, var(--parchment-dark) 100%);
+    padding:8%;
+  }
+  #rsvp::before{
+    content:''; position:absolute; inset:14px;
+    border:2px solid var(--wine); outline:1px solid var(--wine);
+    outline-offset:5px; pointer-events:none;
+  }
+  .rsvp-card{
+    position:relative; width:100%; max-width:420px; text-align:center; color:var(--ink);
+  }
+  .rsvp-card h2{
+    font-family:'Cinzel', serif; color:var(--wine); font-size:26px;
+    letter-spacing:1px; margin:0 0 4px;
+  }
+  .rsvp-card .sub{
+    font-style:italic; font-size:15px; margin-bottom:18px; color:var(--ink);
+  }
+  .rsvp-card form{display:flex; flex-direction:column; gap:12px; text-align:left;}
+  .rsvp-card label{
+    font-family:'Cinzel', serif; font-size:11px; letter-spacing:1px;
+    color:var(--wine-dark); margin-bottom:3px; display:block;
+  }
+  .rsvp-card input[type=text],
+  .rsvp-card select,
+  .rsvp-card textarea{
+    width:100%; font-family:'EB Garamond', serif; font-size:16px;
+    padding:9px 10px; border:1px solid var(--wine); border-radius:6px;
+    background:rgba(255,250,235,.7); color:var(--ink); resize:none;
+  }
+  .rsvp-card textarea{min-height:60px;}
+  .btn-enviar{
+    margin-top:6px; align-self:center;
+    background:var(--wine); color:#f3e6c0; border:2px solid #f3e6c0;
+    font-family:'Cinzel', serif; font-size:14px; letter-spacing:1px;
+    padding:11px 30px; border-radius:30px; cursor:pointer;
+    box-shadow:0 3px 10px rgba(0,0,0,.35);
+  }
+  .btn-enviar:active{transform:scale(.97);}
+  #thanksMsg{display:none; text-align:center;}
+  #thanksMsg h2{font-family:'Cinzel', serif; color:var(--wine); font-size:24px;}
+  #thanksMsg p{font-size:17px; line-height:1.5;}
+  #thanksMsg .btn-voltar-static{
+    position:static; display:inline-block; margin-top:18px;
+  }
+
+  /* ---------- SOM ---------- */
+  #soundToggle{
+    position:absolute; top:4%; right:4%; z-index:50;
+    width:38px; height:38px; border-radius:50%;
+    background:rgba(0,0,0,.45); border:1px solid #f3e6c0;
+    color:#f3e6c0; font-size:16px; display:none;
+    align-items:center; justify-content:center; cursor:pointer;
+  }
+  #soundToggle.show{display:flex;}
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- CAPA -->
+  <div id="cover" class="screen active">
+    <div class="hint">Toque para abrir o convite</div>
+  </div>
+
+  <!-- VIDEO -->
+  <div id="videoScreen" class="screen">
+    <video id="envelopeVideo" src="videoharry.mp4" playsinline muted></video>
+    <button id="skipBtn">Pular ›</button>
+  </div>
+
+  <!-- INFO -->
+  <div id="info" class="screen">
+    <button id="hsDicas" class="hotspot" aria-label="Dicas de presente"></button>
+    <button id="hsConfirma" class="hotspot" aria-label="Confirme sua presença"></button>
+  </div>
+
+  <!-- DICAS DE PRESENTE -->
+  <div id="dicas" class="screen">
+    <button class="btn-voltar" data-back>‹ Voltar</button>
+  </div>
+
+  <!-- RSVP -->
+  <div id="rsvp" class="screen">
+    <button class="btn-voltar" data-back>‹ Voltar</button>
+    <div class="rsvp-card">
+      <div id="formWrap">
+        <h2>Confirme sua Presença</h2>
+        <div class="sub">Sua magia faz parte dessa história</div>
+        <form id="rsvpForm">
+          <div>
+            <label>Nome completo</label>
+            <input type="text" id="nomeConvidado" required>
+          </div>
+          <div>
+            <label>Você vai comparecer?</label>
+            <select id="vaiComparecer" required>
+              <option value="">Selecione</option>
+              <option value="sim">Sim, estarei lá!</option>
+              <option value="nao">Não poderei ir</option>
+            </select>
+          </div>
+          <div>
+            <label>Número de acompanhantes</label>
+            <input type="text" id="acompanhantes" placeholder="Ex: 2">
+          </div>
+          <div>
+            <label>Mensagem (opcional)</label>
+            <textarea id="mensagem" placeholder="Deixe uma mensagem para a aniversariante..."></textarea>
+          </div>
+          <button type="submit" class="btn-enviar">Confirmar Presença</button>
+        </form>
+      </div>
+      <div id="thanksMsg">
+        <h2>Obrigada! 🦉</h2>
+        <p id="thanksText"></p>
+        <button class="btn-voltar btn-voltar-static" data-back>‹ Voltar ao convite</button>
+      </div>
+    </div>
+  </div>
+
+  <button id="soundToggle">🔊</button>
+  <audio id="bgMusic" src="musicaharry.mp3" loop></audio>
+
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const cover = $('cover'), videoScreen = $('videoScreen'), info = $('info'),
+        dicas = $('dicas'), rsvp = $('rsvp');
+  const video = $('envelopeVideo');
+  const music = $('bgMusic');
+  const soundToggle = $('soundToggle');
+  const skipBtn = $('skipBtn');
+
+  function showScreen(el){
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active','fade-in'));
+    el.classList.add('active','fade-in');
+  }
+
+  // Capa -> vídeo
+  cover.addEventListener('click', () => {
+    music.play().catch(()=>{});
+    soundToggle.classList.add('show');
+    showScreen(videoScreen);
+    video.muted = false;
+    video.currentTime = 0;
+    video.play().catch(()=>{ video.muted = true; video.play(); });
+    setTimeout(()=> skipBtn.classList.add('show'), 1500);
+  });
+
+  video.addEventListener('ended', () => showScreen(info));
+  skipBtn.addEventListener('click', () => { video.pause(); showScreen(info); });
+
+  // Botões da página de informações
+  $('hsDicas').addEventListener('click', () => showScreen(dicas));
+  $('hsConfirma').addEventListener('click', () => showScreen(rsvp));
+
+  // Botões voltar
+  document.querySelectorAll('[data-back]').forEach(btn=>{
+    btn.addEventListener('click', () => showScreen(info));
+  });
+
+  // Som
+  soundToggle.addEventListener('click', () => {
+    if(music.paused){ music.play(); soundToggle.textContent='🔊'; }
+    else{ music.pause(); soundToggle.textContent='🔇'; }
+  });
+
+  // Formulário RSVP (sem envio - apenas mensagem de agradecimento)
+  $('rsvpForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const nome = $('nomeConvidado').value.trim();
+    const vai = $('vaiComparecer').value;
+    let texto = vai === 'sim'
+      ? `Ficamos muito felizes que você estará lá, ${nome}!`
+      : `Sentiremos sua falta, ${nome}. Obrigada por avisar!`;
+    $('thanksText').textContent = texto;
+    $('formWrap').style.display = 'none';
+    $('thanksMsg').style.display = 'block';
+  });
+</script>
+</body>
+</html>
